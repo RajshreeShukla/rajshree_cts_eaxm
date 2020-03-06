@@ -1,4 +1,5 @@
 use ctspune;
+use ctspune;
 create  table account_master(account_number varchar(6) primary key,customer_number varchar(6),
 branch_id varchar(6),opening_balance int,account_opening_date date, customer_type varchar(10), account_status varchar(10),
 foreign key (customer_number) references customer_master(customer_number),
@@ -31,12 +32,39 @@ insert into transaction_details values (232345,123231,"2019-04-30","UPI","online
 insert into transaction_details values (236723,123567,"2019-01-31","UPI","online",34000);
 
 
+select count(customer_city) as Cust_Count from customer_master where customer_city="pune";
 
+select customer_master.customer_number,customer_master.firstname,account_master.
+account_number from account_master ,customer_master where account_master.customer_number=
+customer_master.customer_number and day(account_opening_date)>15;
 
+select account_master.customer_number,account_master.account_number,customer_master.firstname from account_master ,customer_master  where account_master.customer_number=customer_master.customer_number and account_status="terminated";
 
+select transaction_type,count(*) as Trans_count from transaction_details ,account_master where transaction_details.account_number=account_master.account_number and a.customer_number="13";
 
+select count(*) as Count_Customer from customer_master where customer_number not in(select distinct customer_number from account_master);
 
+select distinct a.account_number,sum(t.transaction_amount)+a.opening_balance as Deposit_Amount from account_master a,transaction_details t where  t.account_number=a.account_number and transaction_type="deposit" group by account_number
 
+union
 
+select account_number,opening_balance from account_master where account_number not in(select account_number from transaction_details);
 
+select b.branch_city,count(*) from branch_master b,account_master a where b.branch_id=a.branch_id group by branch_city
+
+union
+
+select branch_city,0 from branch_master where branch_city not in
+
+(select branch_city from branch_master b,account_master a where a.branch_id=b.branch_id group by branch_city)
+
+union
+
+select b.branch_id,count(*) from branch_master b,account_master a where a.branch_id=b.branch_id group by branch_id
+
+union
+
+select branch_id,0 from branch_master where branch_id not in
+
+(select a.branch_id from branch_master b,account_master a where a.branch_id=b.branch_id group by branch);
 
